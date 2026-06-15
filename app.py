@@ -4,6 +4,21 @@ import numpy as np
 
 st.title("Otimizador de Apostas por Odds e Confiança")
 
+modo = st.selectbox(
+    "Modo de estratégia",
+    ["Conservador", "Balanceado", "Agressivo"]
+)
+
+if modo == "Conservador":
+    peso_retorno = 0.40
+    peso_risco = 0.60
+elif modo == "Balanceado":
+    peso_retorno = 0.60
+    peso_risco = 0.40
+else:
+    peso_retorno = 0.80
+    peso_risco = 0.20
+
 capital = st.number_input("Capital total disponível (R$)", min_value=1.0, value=30.0, step=1.0)
 
 st.subheader("Informe os resultados")
@@ -140,10 +155,15 @@ if st.button("Calcular otimização"):
             if df.empty:
                 st.warning("Nenhuma distribuição atende aos critérios definidos.")
             else:
-                df = df.sort_values(
-                    by=["Retorno esperado ponderado", "Maior perda"],
-                    ascending=[False, False]
-                )
+                df["Score estratégico"] = (
+    df["Retorno esperado ponderado"] * peso_retorno
+    + df["Maior perda"] * peso_risco
+)
+
+df = df.sort_values(
+    by=["Score estratégico"],
+    ascending=False
+)
 
                 st.subheader("Melhores combinações")
                 st.dataframe(df.head(20), use_container_width=True)
