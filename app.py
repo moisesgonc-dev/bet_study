@@ -156,8 +156,7 @@ if st.button("Calcular otimização"):
                 st.warning("Nenhuma distribuição atende aos critérios definidos.")
             else:
                 df["Score estratégico"] = (
-    df["Retorno esperado ponderado"] * peso_retorno
-    + df["Maior perda"] * peso_risco
+    df["Retorno esperado ponderado"] * peso_retorno + df["Maior perda"] * peso_risco
 )
 
 df = df.sort_values(
